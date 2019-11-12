@@ -1,36 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalab=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-     <title>Event Detail</title>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+                content="width=device-width, user-scalab=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Event Detail</title>
 </head>
+
 <body>
-        {% csrf_token %}
+
         <h1>Event details of {{event.title}}</h1>
         <h2>
-            <ul>
-                <li>
-                        Description:{{event.description}}
-                </li>
-                <li>
-                        Start Time:{{event.start_time}}
-                </li>
-                <li>
-                        End Time:{{event.end_time}}
-                </li>
-                <li>
-                      <span>
-                           {% if event.image.url != Null%}
-                              <img src="{{ event.image.url }}" alt="Event Image">
-                           {% endif %}
-                      </span> 
-                </li>
-            </ul>
+                <ul>
+                        <li>
+                                Description:{{event.description}}
+                        </li>
+                        <li>
+                                Start Time:{{event.start_time}}
+                        </li>
+                        <li>
+                                End Time:{{event.end_time}}
+                        </li>
+                        {% if event.event_type == '1'%}
+                        <li>
+                                Contest :{{ event_add.name }}
+                        </li>
+                        <li>
+                                Contest Url :
+                                {% if event_add.contest_url != None %}
+                                <a href="{{event_add.contest_url}}">
+                                        {{event_add.contest_url}}
+                                </a>
+                                {% endif %}
+                        </li>
+                        <li>
+                                Editorial Url :
+                                {% if event_add.editorial_url != None %}
+                                <a href="{{event_add.editorial_url}}">{{event_add.editorial_url}}
+                                </a>
+                                {% endif%}
+                        </li>
+                        <li>
+                                Ranklist Url :
+                                {% if event_add.editorial_url != None %}
+                                <a href="{{event_add.ranklist_url}}">
+                                        {{event_add.ranklist_url}}
+                                </a>
+
+                                {% endif %}
+                        </li>
+                        <li>
+                                Setters:
+                                {% for e_user in event_users %}
+                                {% if e_user.user_type == "setter"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+
+                        </li>
+                        <li>
+                                Testers:
+                                {% for e_user in event_users %}
+                                {% if e_user.user_type == "tester"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+
+                        </li>
+                        <li>
+                                Rank 1:
+                                {% for e_user in event_users %}
+                                {% if e_user.user_type == "rank1"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+
+                        </li>
+                        <li>
+                                Rank 2:
+                                {% for e_user in event_users %}
+                                {% if e_user.user_type == "rank2"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+
+                        </li>
+                        <li>
+                                Rank 3:
+                                {% for e_user in event_users %}
+                                {% if e_user.user_type == "rank3"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+
+                        </li>
+
+                        {% endif %}
+                        {% if event.event_type == '2'%}
+                        <li>
+                                class for:{{ event_add.year }}
+                        </li>
+                        <li>
+                                class topic:{{ event_add.topics }}
+                        </li>
+                        <li>
+                                        Teacher:
+                                        {% for e_user in event_users %}
+                                        {% if e_user.user_type == "teacher"%}
+                                        <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                        {% endif %}
+                                        {% endfor%}
+                        </li>
+                        <li>
+                                Material Url :
+                                {% if event_add.material_url != None %}
+                                <a href="{{event_add.material_url}}">
+                                        {{event_add.material_url}}
+                                </a>
+
+                                {% endif %}
+                        </li>
+                        {% endif %}
+                        <span>
+                                {% if event.image.url != Null%}
+                                <img src="{{ event.image.url }}" alt="Event Image">
+                                {% endif %}
+                        </span>
+                        </li>
+                </ul>
         </h2>
 
 
 </body>
-

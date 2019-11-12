@@ -24,6 +24,8 @@ import datetime
 from .validators import valid_url_extension
 from .validators import valid_url_mimetype
 from django.core.exceptions import PermissionDenied
+from .cal_api import create_event
+
 
 json.JSONEncoder.default = lambda self,obj: (obj.isoformat() if isinstance(obj, datetime.datetime) else None)
 
@@ -34,7 +36,7 @@ def superuser_only(function):
        return function(request, *args, **kwargs)
    return _inner
 
-@superuser_only
+
 def events(request):
     events=Events.objects.all()
     perms=0
@@ -58,26 +60,38 @@ def event_create(request):
 
         event=form.save(commit=False)
         image_url=form.cleaned_data['image_url']
-        type=valid_url_extension(image_url)
-        full_path='media/images/'+'event_'+str(id)+ '.png'
-        try:
-            urllib.request.urlretrieve(image_url,full_path)
-        except:
-            return HttpResponse("Downloadable Image Not Found!")
-        event.image='../'+full_path
+        print(image_url)
+        if image_url != "":
+                type=valid_url_extension(image_url)
+                full_path='media/images/'+'event_'+str(id)+ '.png'
+                try:
+                    urllib.request.urlretrieve(image_url,full_path)
+                except:
+                    return HttpResponse("Downloadable Image Not Found!")
+                event.image='../'+full_path
         event.save()
-        return redirect('events')
-
+        #create_event(event)
+        return redirect('events:events')
+    
     return render(request, 'create_event.html',{'form':form,"perms":perms})
 
-@superuser_only
 def event_detail(request,id):
     try:
         event =get_object_or_404( Events,pk=id)
     except:
         return HttpResponse("id does not exist")
     else:
-        return render(request,'event_detail.html',{'event':event})
+        if event.event_type == "1":
+            event_add=Contests.objects.get(name=event.contest_name)
+            to_add=event_add
+        elif event.event_type == "2":
+            event_add=Class.objects.get(topics=event.class_topics)
+            to_add=event_add
+        else:
+            to_add=""
+        event_users=Event_and_users.objects.filter(event=event)
+        print(event_users)        
+        return render(request,'event_detail.html',{'event':event,"event_add":to_add,"event_users":event_users})
 
 @superuser_only
 def event_update(request,id):
@@ -108,10 +122,9 @@ def event_update(request,id):
                     return HttpResponse("Downloadable Image Not Found!")
                 event.image='../'+full_path
                 event.save()
-                return redirect('events')
+                return redirect('events:events')
         return render(request, 'update_event.html',{'upform':upform,"perms":perms})
 
-@superuser_only
 def upcoming_events(request):
     today=timezone.now()
     upto=today + timedelta(days=365)
