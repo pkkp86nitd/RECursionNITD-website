@@ -6,32 +6,37 @@
           content="width=device-width, user-scalab=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
      <meta http-equiv="X-UA-Compatible" content="ie=edge">
      <title>Events</title>
+</head>
 
 <body>
 
 
-    <h1>EVENTS:</h1>
+    <h1>Contest:</h1>
     <li>
         {% if perms %}
-        <h1>Hello superuser:Update Event</h1>
-        <div >
+        <h1>Hello superuser:Add New Contest</h1>
+              <div >
                 <p>Enter the details below:</p><br>
-                <form action = "{% url 'events:event_update' id %}" method="POST" > {% csrf_token %}
+                <form action = "{% url 'events:create_contest' id %}" method="POST" >
+                  {% csrf_token %}
                   <table>
-                      {{ upform }}
+                      {{ form }}
+                      {{eform}}
                   </table>
                       <br>
-                  <button type="submit" class="save btn btn-primary" style="margin-left:150px;">UPDATE</button>
-                </form>
+                  <input type="submit" value="Submit">
+                </form>  
               </div>
+              
               {% else %}
               <p><a href="/login/">LOGIN</a></p>
         {% endif %}
     </li>
     <div id='msg'>
-        doosra
+    </div>
+    <div id='update' hidden>
+
     </div>
 
 
 </body>
-</head>

@@ -43,4 +43,36 @@ class Eventsform(forms.ModelForm):
                 ),
               
         }
-  
+class Contestsform(forms.ModelForm):
+    name = models.CharField(max_length=30)
+    contest_url = models.URLField()
+    editorial_url = models.URLField()
+    ranklist_url = models.URLField()
+
+    class Meta:
+         model=Contests
+         fields=('name','contest_url','editorial_url','ranklist_url')
+
+class Classform(forms.ModelForm):
+    year = models.CharField(max_length=30)
+    topics = models.TextField()
+    teacher =  models.CharField(max_length=30)
+    material_url = models.URLField()         
+    class Meta:
+        model=Class
+        fields=('year','topics','material_url')
+
+class Event_and_usersform(forms.ModelForm):
+    roles=(
+        ('tester','tester'),
+        ('setter','setter'),
+        ('teacher','teacher'),
+        ('rank1','rank1'),
+        ('rank2','rank2'),
+        ('rank3','rank3')
+    )  
+    user_type=models.CharField(choices=roles) 
+     
+    class Meta:
+        model=Event_and_users
+        fields=('user_type','user')       

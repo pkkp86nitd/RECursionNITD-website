@@ -20,7 +20,6 @@ class Contests(models.Model):
 class Class(models.Model):
     year = models.CharField(max_length=30)
     topics = models.TextField()
-    teacher =  models.CharField(max_length=30,blank=True,null=True)
     material_url = models.URLField(blank=True, null=True)
     def __str__(self):
         return self.topics
@@ -73,9 +72,12 @@ class Event_and_users(models.Model):
     user_type= models.CharField(max_length=50, choices=role ,default='tester')
     user=models.ForeignKey(User, on_delete=models.CASCADE,blank=True,null=True)
     event=models.ForeignKey(Events, on_delete=models.CASCADE,blank=True,null=True)
-
     def __str__(self):
-        return str(self.user_type) +" "+ str(self.user.username)+" "+str(self.event.id)
+        if self.user == None or self.event == None:
+            return "None"
+        else :
+            return str(self.user_type) +" "+ str(self.user.username)+" "+str(self.event.id)
+
     class Meta:
         managed = True
         db_table = 'event_and_users'
