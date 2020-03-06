@@ -76,6 +76,12 @@
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
                                 {% endfor%}
+                                {% if event_add.rank1 != None %}
+                                <a href="#">
+                                        {{event_add.rank1}}
+                                </a>
+
+                                {% endif %}
 
                         </li>
                         <li>
@@ -85,6 +91,13 @@
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
                                 {% endfor%}
+                                {% if event_add.rank2 != None %}
+                                <a href="#">
+                                        {{event_add.rank2}}
+                                </a>
+
+                                {% endif %}
+                                
 
                         </li>
                         <li>
@@ -94,6 +107,12 @@
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
                                 {% endfor%}
+                                {% if event_add.rank3 != None %}
+                                <a href="#">
+                                        {{event_add.rank3}}
+                                </a>
+
+                                {% endif %}
 
                         </li>
 

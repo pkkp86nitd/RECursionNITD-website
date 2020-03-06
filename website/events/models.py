@@ -41,6 +41,9 @@ class Contests(models.Model):
     contest_url=models.URLField(blank=True,null=True)
     editorial_url=models.URLField(blank=True,null=True)
     ranklist_url=models.URLField(blank=True,null=True)
+    rank1 = models.CharField(max_length=30,blank=True,null=True)
+    rank2 = models.CharField(max_length=30,blank=True,null=True)
+    rank3 = models.CharField(max_length=30,blank=True,null=True)
     event = models.ForeignKey(Events, on_delete=models.CASCADE,blank=True,null=True)
     def __str__(self):
         return self.name

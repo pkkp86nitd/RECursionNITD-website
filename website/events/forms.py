@@ -50,10 +50,13 @@ class Contestsform(forms.ModelForm):
     contest_url = models.URLField()
     editorial_url = models.URLField()
     ranklist_url = models.URLField()
+    rank1 = models.CharField(max_length=30,blank=True,null=True)
+    rank2 = models.CharField(max_length=30,blank=True,null=True)
+    rank3 = models.CharField(max_length=30,blank=True,null=True)
 
     class Meta:
          model=Contests
-         fields=('name','contest_url','editorial_url','ranklist_url')
+         fields=('name','contest_url','editorial_url','ranklist_url','rank1','rank2','rank3')
 
 class Classform(forms.ModelForm):
     year = models.CharField(max_length=30)
@@ -73,6 +76,7 @@ class Contest_and_usersform(forms.ModelForm):
     )  
     user_type=models.CharField(choices=roles) 
     user= models.CharField(max_length=30)
+
      
     class Meta:
         model=Contest_and_users
