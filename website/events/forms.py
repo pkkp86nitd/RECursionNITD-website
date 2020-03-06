@@ -58,23 +58,34 @@ class Contestsform(forms.ModelForm):
 class Classform(forms.ModelForm):
     year = models.CharField(max_length=30)
     topics = models.TextField()
-    teacher =  models.CharField(max_length=30)
     material_url = models.URLField()         
     class Meta:
         model=Class
         fields=('year','topics','material_url')
 
-class Event_and_usersform(forms.ModelForm):
+class Contest_and_usersform(forms.ModelForm):
     roles=(
         ('tester','tester'),
-        ('setter','setter'),
         ('teacher','teacher'),
         ('rank1','rank1'),
         ('rank2','rank2'),
         ('rank3','rank3')
     )  
     user_type=models.CharField(choices=roles) 
+    user= models.CharField(max_length=30)
      
     class Meta:
-        model=Event_and_users
-        fields=('user_type','user')       
+        model=Contest_and_users
+        fields=('user_type','user')     
+
+class Class_and_usersform(forms.ModelForm):
+    roles=(
+        ('coordinator','coordinator'),
+        ('teacher','teacher'),
+    )  
+    designation=models.CharField(choices=roles) 
+    name= models.CharField(max_length=30)
+     
+    class Meta:
+        model=Class_and_users
+        fields=('designation','name')             

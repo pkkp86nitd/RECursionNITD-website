@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalab=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-     <title>Events</title>
+        content="width=device-width, user-scalab=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Events</title>
 </head>
 
 <body>
@@ -15,29 +16,97 @@
     <li>
         {% if perms %}
         <h1>Hello superuser:Add New Event</h1>
-        <div >
+        <div>
 
-                <p>Enter the details below:</p><br>
-                <form action = "{% url 'events:event_create' %}" method="POST" >
-                  {% csrf_token %}
-                  <table>
-                      {{ form }}
+            <p>Enter the details below:</p><br>
+            <form action="{% url 'events:event_create' %}"  method="POST" novalidate >
+                {% csrf_token %}
+                <table>
+                    {{ form }}
+                   <div></div>
+                </table>
+                {{ form.media }}
+                <br>
+                <div id="event"></div>
+                <table id="contest">
+                    {{ Conform }}
+                   <div></div>
+                </table>
+                <table id="eform2">
+                    {{ eform2 }}
+                   <div></div>
+                </table>
+                <table id="clas">
+                    {{ Clsform }}
+                   <div></div>
+                </table>
+                <table id="eform3">
+                    {{ eform3 }}
+                   <div></div>
+                </table>
+              
+                <input type="button" value="submit" id="submit1" onclick="showhide()">
+                <input type="submit" value="submit" id="submit2" >
+            </form>
+        </div>
+       
+        
 
-                  </table>
-                      {{ form.media }}
-                      <br>
-                  <input type="submit" value="Submit">
-                </form>
-              </div>
-              {% else %}
-              <p><a href="/login/">LOGIN</a></p>
+        {% else %}
+        <p><a href="/login/">LOGIN</a></p>
         {% endif %}
     </li>
-    <div id='msg'>
-    </div>
-    <div id='update' hidden>
+
 
     </div>
 
 
 </body>
+<script type="text/javascript ">
+document.getElementById("contest").style.display="none";
+document.getElementById("clas").style.display="none";
+document.getElementById("eform2").style.display="none";
+document.getElementById("eform3").style.display="none";
+document.getElementById("submit2").style.display="none";
+
+
+function showhide()
+{
+   var type=document.getElementById("id_event_type").value;
+   console.log(type);
+   if(type==1)type="contest";
+   else if(type==2)type="clas";
+   console.log(type);
+   var div = document.getElementById(type);
+   if (div.style.display != "none") {
+
+       div.style.display = "none";
+    }
+
+   else {
+       div.style.display = "block";
+    }
+    document.getElementById("submit1").style.display="none";
+    document.getElementById("submit2").style.display="block";
+    document.getElementById("id_event_type").style.display="none";
+    document.getElementById("event").innerHTML+="<h1>"+type+"</h1>";
+    var form="";
+    if(type=="contest")form="eform2";
+   else if(type=="clas")form="eform3";
+   console.log(form);
+   var divv = document.getElementById(form);
+   if (divv.style.display != "none") {
+
+       divv.style.display = "none";
+    }
+
+   else {
+       divv.style.display = "block";
+    }  
+ }
+
+
+
+</script>
+
+</html>

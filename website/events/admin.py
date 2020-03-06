@@ -11,8 +11,14 @@ class ClassAdmin(admin.ModelAdmin):
 @admin.register(Contests)    
 class ContestAdmin(admin.ModelAdmin):
     pass
-@admin.register(Event_and_users)    
-class Event_and_userAdmin(admin.ModelAdmin):
+@admin.register(Contest_and_users)    
+class Contest_and_userAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(Class_and_users)    
+class Class_and_userAdmin(admin.ModelAdmin):
+    pass
+
+
 
 

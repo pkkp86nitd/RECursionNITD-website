@@ -3,7 +3,7 @@ from .models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.template import loader, RequestContext
-from .forms import Eventsform,Contestsform,Classform,Event_and_usersform
+from .forms import Eventsform,Contestsform,Classform,Contest_and_usersform,Class_and_usersform
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -53,11 +53,11 @@ def create_contest(request,id):
          perms=1
      print(request.method)
      form=Contestsform(None)
-     eform = modelformset_factory(Event_and_users, fields=('user_type','user'), extra=6)
+     eform = modelformset_factory(Contest_and_users, fields=('user_type','user'), extra=6)
      if request.method == "POST":
          form = Contestsform(request.POST)
-         form2= eform(request.POST)
-         if form.is_valid and form2.is_valid: 
+         form2= eform(request.POST )
+         if form.is_valid() and form2.is_valid(): 
              if form.name != "": 
                  f=form.save(commit=False)
                  form.save()
@@ -65,15 +65,14 @@ def create_contest(request,id):
                  print(event,f.name,f.id)
                  event.contest_name=Contests.objects.get(name=f.name)
                  event.save()
-             f2 =form2.save(commit=False)   
-             for item in f2:
-                 item.event=Events.objects.get(id=id)
-                 item.save()
+                 f2 =form2.save(commit=False)   
+                 for item in f2:
+                     item.event=Events.objects.get(id=id)
+                     item.save()
 
              return redirect('events:events')    
-     args={'form':form,'perms':perms,'id':id}
-     print(form)
-     form2 =eform(queryset=Event_and_users.objects.none())
+   
+     form2 =eform(queryset=Contest_and_users.objects.none())
      args={'form':form,'perms':perms,'id':id,'eform':form2}
      return render(request,'create_contest.html',args)    
 
@@ -84,10 +83,10 @@ def create_class(request,id):
     if request.user.is_superuser:
         perms=1
     form=Classform(None)
-    form2=Event_and_usersform(None)
+    form2=Contest_and_usersform(None)
     if request.method =="POST":
         form=Classform(request.POST or None)
-        form2=Event_and_usersform(request.POST or None)
+        form2=Contest_and_usersform(request.POST or None)
         if form.is_valid and form2.is_valid:
             if form.topics != "":
                 f=form.save(commit=False)
@@ -109,36 +108,84 @@ def event_create(request):
     perms=0
     if request.user.is_superuser:
         perms=1
-    form = Eventsform(request.POST or None)
-    #import pdb;pdb.set_trace();
-    print(form)
-    if form.is_valid():
-
+    form = Eventsform( None)
+    print(request.method)
+    Conform=Contestsform( None)
+    Clsform=Classform( None)
+    eform2 = modelformset_factory(Contest_and_users, fields=('user_type','user'), extra=6)
+    eform3 = modelformset_factory(Class_and_users, fields=('designation','name'), extra=3)
+    form2=eform2(queryset=Contest_and_users.objects.none()) 
+    form3=eform3(queryset=Class_and_users.objects.none()) 
+    if request.method=="POST":
+        form = Eventsform( request.POST or None)
+        Conform=Contestsform(request.POST or None )
+        form2=eform2(request.POST or None) 
+        Clsform=Classform(request.POST or None )
+        
+        form3=eform3(request.POST or None) 
+        print(form3)
+        print("oberve ",form.is_valid(),Conform.is_valid(),form2.is_valid(),Clsform.is_valid(),form3.is_valid())
+    if form.is_valid() :
         event=form.save(commit=False)
+        form.save()
+        id=event.id
         image_url=form.cleaned_data['image_url']
-        print(image_url)
         if image_url != "":
                 type=valid_url_extension(image_url)
+                print("event ",id)
                 full_path='media/images/'+'event_'+str(id)+ '.png'
                 try:
                     urllib.request.urlretrieve(image_url,full_path)
                 except:
+                    get_object_or_404(Events,pk=id).delete()
                     return HttpResponse("Downloadable Image Not Found!")
-                event.image='../'+full_path
-        event.save()
-        #create_event(event)
-        request.method="GET"
-        if event.event_type == "1" :
-            print("Contest")
-            return create_contest(request,event.id)
+                event.image='../'+full_path           
+        print("Conform ",Conform.name)  
+        if Conform.is_valid() and form2.is_valid() :
+            print("Conform")      
+            if Conform.name != "": 
+                 f=Conform.save(commit=False)
+                 Conform.save()
+                 event.save()
+                 print(event,f.name,event.title)
+                 
+                 Con=Contests.objects.get(pk=f.id)
+                 Con.event=Events.objects.get(pk=event.id)
+                 Con.save()
             
-        elif event.event_type == "2":
-            return  create_class(request,event.id)
-             
-        else:
-            return redirect("events:events")    
+              
+                 print("commit") 
+                 
+                 for item in form2:
+                     it=item.save(commit=False)
+                     it.event=Events.objects.get(pk=event.id)
+                     if it.user != None:
+                        it.save()           
+
+                 #Event_contest.objects.create(event_title=get_object_or_404(Events,pk=event.id),contest_name=get_object_or_404(Contests,pk=f.id))
+
+        if Clsform.is_valid() and form3.is_valid() :
+            print("CLSform")
+            if Clsform.topics != "":
+                f=Clsform.save(commit=False)
+                Clsform.save()
+                event.save() 
+                Con=Class.objects.get(pk=f.id)
+                Con.event=Events.objects.get(pk=event.id)
+                Con.save()
+                for item in form3:
+                    it=item.save(commit=False)
+                    it.event=Events.objects.get(pk=event.id)
+                    if it.name != None:
+                       it.save()  
+
+                #Event_class.objects.create(event_title=get_object_or_404(Events,pk=event.id),class_topics=get_object_or_404(Class,pk=f.id))  
+        return redirect("events:events")
+
     
-    return render(request, 'create_event.html',{'form':form,"perms":perms})
+    
+    args={'Conform':Conform,'perms':perms,'eform2':form2,'eform3':form3,'form':form,'Clsform':Clsform}           
+    return render(request, 'create_event.html',args)
 
 def event_detail(request,id):
     try:
@@ -147,16 +194,16 @@ def event_detail(request,id):
         return HttpResponse("id does not exist")
     else:
         if event.event_type == "1":
-            event_add=Contests.objects.get(name=event.contest_name.name)
+            event_add=Contests.objects.get(event=event)
             to_add=event_add
         elif event.event_type == "2":
-            event_add=Class.objects.get(topics=event.class_topics.topics)
+            event_add=Class.objects.get(event=event)
             to_add=event_add
         else:
             to_add=""
-        event_users=Event_and_users.objects.filter(event=event)
-        print(event_users)        
-        return render(request,'event_detail.html',{'event':event,"event_add":to_add,"event_users":event_users})
+        Con_users=Contest_and_users.objects.filter(event=event)
+        Cls_users=Class_and_users.objects.filter(event=event)      
+        return render(request,'event_detail.html',{'event':event,"event_add":to_add,"con_users":Con_users,"cls_users":Cls_users})
 @superuser_only
 def update_contest(request,id):
     try:
@@ -172,7 +219,7 @@ def update_contest(request,id):
             return HttpResponse("Go get perms,admins only")
         contest=get_object_or_404(Contests,pk=event.contest_name.id)
         form=Contestsform( None,instance=contest) 
-        eform = modelformset_factory(Event_and_users, fields=('user_type',"user"), extra=5)
+        eform = modelformset_factory(Contest_and_users, fields=('user_type',"user"), extra=5)
         if request.method == "POST":
              form = Contestsform(request.POST)
              form2= eform(request.POST)
@@ -186,16 +233,16 @@ def update_contest(request,id):
                     if item.user != None:
                         try:
                             user_name = item.user
-                            user = get_object_or_404(Event_and_users, name=user_name)  
+                            user = get_object_or_404(Contest_and_users, name=user_name)  
                         except:
-                            if  Event_and_users.objects.filter(user=user_name,event=event,user_type=item.user_type).exists() == False:
-                                user = Event_and_users.objects.create(user=user_name,event=event,user_type=user_type) 
+                            if  Contest_and_users.objects.filter(user=user_name,event=event,user_type=item.user_type).exists() == False:
+                                user = Contest_and_users.objects.create(user=user_name,event=event,user_type=user_type) 
                     else :
                         item.delete()       
                      
                 return redirect('events:events')    
         
-        form2 =eform(queryset=Event_and_users.objects.filter(event=event))    
+        form2 =eform(queryset=Contest_and_users.objects.filter(event=event))    
         args={'form':form,'perms':perms,'id':id,'eform':form2}
     return render(request,'update_contest.html',args) 
 
@@ -215,7 +262,7 @@ def update_class(request,id):
         classs=get_object_or_404(Class,pk=event.class_topics.id)
         print("classss",classs.id)
         form=Classform( None,instance=classs) 
-        eform = modelformset_factory(Event_and_users, fields=('user_type',"user"), extra=2)
+        eform = modelformset_factory(Contest_and_users, fields=('user_type',"user"), extra=2)
         if request.method == "POST":
              form = Classform(request.POST)
              form2= eform(request.POST)
@@ -229,15 +276,15 @@ def update_class(request,id):
                     if item.user != None:
                         try:
                             user_name = item.user
-                            user = get_object_or_404(Event_and_users, name=user_name)  
+                            user = get_object_or_404(Contest_and_users, name=user_name)  
                         except:
-                            if  Event_and_users.objects.filter(user=user_name,event=event,user_type=item.user_type).exists() == False:
-                                user = Event_and_users.objects.create(user=user_name,event=event,user_type=item.user_type) 
+                            if  Contest_and_users.objects.filter(user=user_name,event=event,user_type=item.user_type).exists() == False:
+                                user = Contest_and_users.objects.create(user=user_name,event=event,user_type=item.user_type) 
                     else :
                         item.delete()       
                 return redirect('events:events')    
         
-        form2 =eform(queryset=Event_and_users.objects.filter(event=event))    
+        form2 =eform(queryset=Contest_and_users.objects.filter(event=event))    
         args={'form':form,'perms':perms,'id':id,'eform':form2}
     return render(request,'update_class.html',args)          
 

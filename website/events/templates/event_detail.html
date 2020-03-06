@@ -53,7 +53,7 @@
                         </li>
                         <li>
                                 Setters:
-                                {% for e_user in event_users %}
+                                {% for e_user in con_users %}
                                 {% if e_user.user_type == "setter"%}
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
@@ -62,7 +62,7 @@
                         </li>
                         <li>
                                 Testers:
-                                {% for e_user in event_users %}
+                                {% for e_user in con_users %}
                                 {% if e_user.user_type == "tester"%}
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
@@ -71,7 +71,7 @@
                         </li>
                         <li>
                                 Rank 1:
-                                {% for e_user in event_users %}
+                                {% for e_user in con_users %}
                                 {% if e_user.user_type == "rank1"%}
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
@@ -80,7 +80,7 @@
                         </li>
                         <li>
                                 Rank 2:
-                                {% for e_user in event_users %}
+                                {% for e_user in con_users %}
                                 {% if e_user.user_type == "rank2"%}
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
@@ -89,7 +89,7 @@
                         </li>
                         <li>
                                 Rank 3:
-                                {% for e_user in event_users %}
+                                {% for e_user in con_users %}
                                 {% if e_user.user_type == "rank3"%}
                                 <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
                                 {% endif %}
@@ -107,12 +107,20 @@
                         </li>
                         <li>
                                         Teacher:
-                                        {% for e_user in event_users %}
-                                        {% if e_user.user_type == "teacher"%}
-                                        <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.user.username}}</a>
+                                        {% for e_user in cls_users %}
+                                        {% if e_user.designation == "teacher"%}
+                                        <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.name.username}}</a>
                                         {% endif %}
                                         {% endfor%}
                         </li>
+                        <li>
+                                Coordinator:
+                                {% for e_user in cls_users %}
+                                {% if e_user.designation == "coordinator"%}
+                                <a href="{% url 'user_profile:view_profile' user.id %}">{{e_user.name.username}}</a>
+                                {% endif %}
+                                {% endfor%}
+                     </li>
                         <li>
                                 Material Url :
                                 {% if event_add.material_url != None %}
