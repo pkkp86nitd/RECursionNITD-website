@@ -71,7 +71,9 @@
                  <!-- QUESTION DETAIL ENDS -->
                 <!-- QUESTION COMMENT SECTION -->
                 <div id="div_comments">
+                    
                     {% for comment in comment %} {% if comment.post == posts %}
+                    
                     <div class="container offset-1 mr-0" style="width: 90%;">
                         <hr id="qDivide">
                         <div class="row">
@@ -199,14 +201,15 @@
 
 <br>
 <!-- --------------------------------------------------------AKM---------------------------------------------->
+
 <div id="div_answers">
      <!-- ANSWERS PORTION STARTS -->
-     {%if reply|length < 2%}
-    <div class="card-header answerBox" style="border:1px solid #dddddd;border-left:5px solid #cccccc;"><h3>{{ reply|length }} Comment</h3></div>
+     {%if replies|length < 2%}
+    <div class="card-header answerBox" style="border:1px solid #dddddd;border-left:5px solid #cccccc;"><h3>{{ replies|length }} Comment</h3></div>
     {%else%}
-    <div class="card-header answerBox" style="border:1px solid #dddddd;border-left:5px solid #cccccc;"><h3>{{ reply|length }} Comments</h3></div>
+    <div class="card-header answerBox" style="border:1px solid #dddddd;border-left:5px solid #cccccc;"><h3>{{ replies|length }} Comments</h3></div>
     {%endif%}
-    {% for reply in reply %} {% if reply.post_id == posts %}
+    {% for reply in replies %} {% if reply.post_id == posts %}
     <div class="container answerBorder card">
         <div class="row">
             <div class="comments col-lg-12 col-md-12" id="comments">
@@ -220,7 +223,7 @@
                     <div class="comment-content col-md-10 col-sm-10 ml-2 p-2">
                         <div class="comment-body answerBoxMargin">
                             {{reply.description|safe}}
-                            <div id='reply_form{{reply.user_id.id}}'  > </div>
+                            <div id='reply_form{{reply.user_id.id}}{{reply.id}}'  > </div>
                             <div id='u_ans_form{{reply.id}}' com-id="{{reply.id}}"> </div>
                             <span class="small comment-meta"><a href="{% url 'user_profile:view_profile' reply.user_id.id  %}">{{ reply.user_id }}</a> last updated on {{reply.updated_at}}</span>
                             <span style="float:right;margin-bottom: 0px;">
@@ -701,7 +704,7 @@ Making URL to link :
         url: "/blog/comment_reply/"+id,
         success: function (data)
         {
-           var id_name = "#reply_form"+user_id
+           var id_name = "#reply_form"+user_id+id
            console.log(id_name)
            $(id_name).html(data).show()
         },

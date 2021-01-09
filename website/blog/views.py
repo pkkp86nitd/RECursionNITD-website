@@ -208,7 +208,7 @@ def detail_blogs(request, id):
         id_list = [id['reply_id'] for id in votes]  # voted answers id
 
 
-    args = {'profile':profile,'user_permission':user_permission,'comform':comform,'repform':repform,'posts': posts, 'reply':reply, 'tags':tags, 'taggings':taggings,'comment':comment,'comment_reply':comment_reply,'rep':rep,'flag':flag,'voted':id_list}
+    args = {'profile':profile,'user_permission':user_permission,'comform':comform,'repform':repform,'posts': posts, 'replies':reply, 'tags':tags, 'taggings':taggings,'comment':comment,'comment_reply':comment_reply,'rep':rep,'flag':flag,'voted':id_list}
     return render(request, 'blog/blog_details.html', args) 
 
 @login_required
